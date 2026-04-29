@@ -1,0 +1,20 @@
+import 'package:delivery_live_tracking/gen/fonts.gen.dart';
+import 'package:delivery_live_tracking/global/theme/colors.dart';
+import 'package:flutter/material.dart';
+
+class AppTheme {
+  static ThemeData get themeData => ThemeData(
+    fontFamily: FontFamily.inter,
+    scaffoldBackgroundColor: AppColors.white,
+    colorSchemeSeed: AppColors.primary,
+    textTheme: TextTheme(
+      titleLarge: TextStyle(
+        fontSize: 20.0,
+        height: 1.4,
+        letterSpacing: 0.4,
+        fontWeight: FontWeight.w600,
+        color: AppColors.neutralColor,
+      ),
+    ),
+  );
+}

@@ -1,4 +1,5 @@
 import 'package:delivery_live_tracking/features/delivery/presentation/view/delivery_screen.dart';
+import 'package:delivery_live_tracking/global/theme/theme.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -13,10 +14,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Delivery Live Tracking',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
-      ),
-      home: const DeliveryScreen()
+      theme: AppTheme.themeData,
+      home: const DeliveryScreen(),
     );
   }
 }
