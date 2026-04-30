@@ -1,4 +1,5 @@
 import 'package:delivery_live_tracking/features/delivery/presentation/viewmodel/delivery_provider.dart';
+import 'package:delivery_live_tracking/global/widgets/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,7 +42,7 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
               urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
               userAgentPackageName: 'com.jabguru.livetracking',
             ),
-            const Center(child: CircularProgressIndicator()),
+            const Center(child: LoadingIndicator()),
           ],
         );
       },
@@ -154,12 +155,7 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
                           child: SizedBox(
                             width: 20,
                             height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.white,
-                              ),
-                            ),
+                            child: LoadingIndicator(),
                           ),
                         ),
                       ),

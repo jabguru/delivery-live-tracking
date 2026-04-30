@@ -4,6 +4,7 @@ import 'package:delivery_live_tracking/global/extensions/color_extension.dart';
 import 'package:delivery_live_tracking/global/extensions/context_extension.dart';
 import 'package:delivery_live_tracking/global/extensions/text_style_extension.dart';
 import 'package:delivery_live_tracking/global/theme/colors.dart';
+import 'package:delivery_live_tracking/global/widgets/progress_indicator.dart';
 import 'package:delivery_live_tracking/global/widgets/space.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,35 +18,13 @@ class DeliveryDetails extends ConsumerWidget {
     final etaAsync = ref.watch(etaProvider);
     return deliveryAsync.when(
       loading: () {
-        return Container(
-          margin: EdgeInsets.symmetric(
-            horizontal: context.eqW(13.0),
-            vertical: context.eqH(18.0),
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          width: double.infinity,
-          height: context.eqH(387.0),
-          child: const Center(child: CircularProgressIndicator()),
-        );
+        return _Container(child: const Center(child: LoadingIndicator()));
       },
       error: (error, stack) {
         return Center(child: Text('Error: $error'));
       },
       data: (delivery) {
-        return Container(
-          margin: EdgeInsets.symmetric(
-            horizontal: context.eqW(13.0),
-            vertical: context.eqH(18.0),
-          ),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(30.0),
-          ),
-          width: double.infinity,
-          height: context.eqH(387.0),
+        return _Container(
           child: SingleChildScrollView(
             padding: EdgeInsets.fromLTRB(
               context.eqW(12.0),
@@ -62,21 +41,9 @@ class DeliveryDetails extends ConsumerWidget {
                       Assets.images.clock.svg(),
                       HorizontalSpacing(12.0),
                       Flexible(
-                        child: etaAsync.when(
-                          data: (eta) {
-                            return Text(
-                              'The package is estimated to arrive within the next $eta minute${eta != 1 ? 's' : ''}.',
-                              style: context.textTheme.bodySmall,
-                            );
-                          },
-                          loading: () => Text(
-                            'The package is estimated to arrive within the next ${delivery.etaMinutes} minutes.',
-                            style: context.textTheme.bodySmall,
-                          ),
-                          error: (_, __) => Text(
-                            'The package is estimated to arrive within the next ${delivery.etaMinutes} minutes.',
-                            style: context.textTheme.bodySmall,
-                          ),
+                        child: Text(
+                          'The package is estimated to arrive within the next ${etaAsync.when(data: (eta) => "$eta minute${eta != 1 ? 's' : ''}.", loading: () => '${delivery.etaMinutes}', error: (_, _) => '${delivery.etaMinutes}')}',
+                          style: context.textTheme.bodySmall,
                         ),
                       ),
                     ],
@@ -353,6 +320,29 @@ class _DeliveryTimeline extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _Container extends StatelessWidget {
+  const _Container({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(
+        horizontal: context.eqW(13.0),
+        vertical: context.eqH(18.0),
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(30.0),
+      ),
+      width: double.infinity,
+      height: context.eqH(387.0),
+      child: child,
     );
   }
 }
