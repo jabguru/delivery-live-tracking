@@ -1,5 +1,6 @@
 import 'package:delivery_live_tracking/features/delivery/data/models/delivery_model.dart';
 import 'package:delivery_live_tracking/features/delivery/data/models/location_model.dart';
+import 'package:delivery_live_tracking/features/delivery/data/services/osrm_routing_service.dart';
 import 'package:delivery_live_tracking/features/delivery/domain/entities/delivery_entity.dart';
 import 'package:delivery_live_tracking/features/delivery/domain/entities/location_entity.dart';
 import 'package:delivery_live_tracking/features/delivery/domain/repositories/delivery_repository.dart';
@@ -10,6 +11,8 @@ class DeliveryRepositoryImpl implements DeliveryRepository {
   static const Duration _updateInterval = Duration(milliseconds: 500);
   static const Duration _waypointDuration = Duration(seconds: 3);
 
+  final OsrmRoutingService _routingService = OsrmRoutingService();
+
   @override
   Future<DeliveryEntity> getDelivery(String orderId) async {
     // Simulate API call delay
@@ -19,8 +22,8 @@ class DeliveryRepositoryImpl implements DeliveryRepository {
     final pickupLocation = const LatLng(6.5244, 3.3792); // Pickup
     final destinationLocation = const LatLng(6.5400, 3.3600); // Destination
 
-    // Create a simulated route with waypoints
-    final routeWaypoints = _generateRouteWaypoints(
+    // Fetch real route from OSRM
+    final routeWaypoints = await _routingService.getRoute(
       pickupLocation,
       destinationLocation,
     );
@@ -101,24 +104,6 @@ class DeliveryRepositoryImpl implements DeliveryRepository {
 
       await Future.delayed(_updateInterval);
     }
-  }
-
-  /// Generate route waypoints between pickup and destination
-  List<LatLng> _generateRouteWaypoints(LatLng start, LatLng end) {
-    final waypoints = <LatLng>[start];
-
-    // Add intermediate points for a realistic route
-    // This simulates a delivery route with several turns
-    final midLatitude = start.latitude + (end.latitude - start.latitude) * 0.5;
-    final midLongitude =
-        start.longitude + (end.longitude - start.longitude) * 0.5;
-
-    waypoints.add(LatLng(start.latitude, midLongitude));
-    waypoints.add(LatLng(midLatitude, midLongitude));
-    waypoints.add(LatLng(midLatitude, end.longitude));
-    waypoints.add(end);
-
-    return waypoints;
   }
 
   /// Ease-out cubic easing function for smooth animation

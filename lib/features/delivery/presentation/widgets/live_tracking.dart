@@ -13,7 +13,6 @@ class LiveTracking extends ConsumerStatefulWidget {
 
 class _LiveTrackingState extends ConsumerState<LiveTracking> {
   final MapController _mapController = MapController();
-  LatLng? _lastRiderLocation;
 
   @override
   void initState() {
@@ -108,11 +107,6 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
                 // Rider marker with live location
                 liveLocationAsync.when(
                   data: (location) {
-                    _lastRiderLocation = LatLng(
-                      location.latitude,
-                      location.longitude,
-                    );
-
                     // Smooth map camera follow
                     Future.microtask(() {
                       _mapController.move(

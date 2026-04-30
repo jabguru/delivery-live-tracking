@@ -4,41 +4,48 @@ import 'package:delivery_live_tracking/features/delivery/domain/entities/locatio
 import 'package:delivery_live_tracking/features/delivery/domain/repositories/delivery_repository.dart';
 import 'package:delivery_live_tracking/features/delivery/domain/usecases/get_delivery_use_case.dart';
 import 'package:delivery_live_tracking/features/delivery/domain/usecases/watch_live_location_use_case.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-// Repository provider
-final deliveryRepositoryProvider = Provider<DeliveryRepository>((ref) {
-  return DeliveryRepositoryImpl();
-});
+part 'delivery_provider.g.dart';
 
-// Use case providers
-final getDeliveryUseCaseProvider = Provider((ref) {
-  final repository = ref.watch(deliveryRepositoryProvider);
-  return GetDeliveryUseCase(repository);
-});
-
-final watchLiveLocationUseCaseProvider = Provider((ref) {
-  final repository = ref.watch(deliveryRepositoryProvider);
-  return WatchLiveLocationUseCase(repository);
-});
-
-// State providers
 const _orderId = 'ORD-682834513';
 
+// Repository provider
+@riverpod
+DeliveryRepository deliveryRepository(Ref ref) {
+  return DeliveryRepositoryImpl();
+}
+
+// Use case providers
+@riverpod
+GetDeliveryUseCase getDeliveryUseCase(Ref ref) {
+  final repository = ref.watch(deliveryRepositoryProvider);
+  return GetDeliveryUseCase(repository);
+}
+
+@riverpod
+WatchLiveLocationUseCase watchLiveLocationUseCase(Ref ref) {
+  final repository = ref.watch(deliveryRepositoryProvider);
+  return WatchLiveLocationUseCase(repository);
+}
+
 // Fetch initial delivery data
-final deliveryProvider = FutureProvider<DeliveryEntity>((ref) async {
+@riverpod
+Future<DeliveryEntity> delivery(Ref ref) async {
   final useCase = ref.watch(getDeliveryUseCaseProvider);
   return useCase(_orderId);
-});
+}
 
 // Stream live location updates
-final liveLocationProvider = StreamProvider<LocationEntity>((ref) {
+@riverpod
+Stream<LocationEntity> liveLocation(Ref ref) {
   final useCase = ref.watch(watchLiveLocationUseCaseProvider);
   return useCase(_orderId);
-});
+}
 
 // Computed ETA provider that updates based on progress
-final etaProvider = StreamProvider<int>((ref) async* {
+@riverpod
+Stream<int> eta(Ref ref) async* {
   final initialDelivery = await ref.watch(deliveryProvider.future);
   final startTime = DateTime.now();
   final totalEtaSeconds = initialDelivery.etaMinutes * 60;
@@ -48,13 +55,10 @@ final etaProvider = StreamProvider<int>((ref) async* {
   // Update ETA every second
   while (true) {
     await Future.delayed(const Duration(seconds: 1));
-    final elapsedSeconds = DateTime
-        .now()
-        .difference(startTime)
-        .inSeconds;
+    final elapsedSeconds = DateTime.now().difference(startTime).inSeconds;
     final remainingSeconds = totalEtaSeconds - elapsedSeconds;
     final remainingMinutes = (remainingSeconds / 60).ceil().clamp(0, 999);
 
     yield remainingMinutes;
   }
-});
+}
