@@ -1,3 +1,4 @@
+import 'package:delivery_live_tracking/features/delivery/presentation/widgets/delivery_details.dart';
 import 'package:delivery_live_tracking/gen/assets.gen.dart';
 import 'package:delivery_live_tracking/global/extensions/context_extension.dart';
 import 'package:delivery_live_tracking/global/theme/colors.dart';
@@ -27,12 +28,14 @@ class DeliveryScreen extends StatelessWidget {
       ),
       extendBodyBehindAppBar: true,
       body: Stack(
+        alignment: Alignment.bottomCenter,
         children: [
           Container(
             color: Colors.grey.shade300,
             width: double.infinity,
             height: double.infinity,
           ),
+          DeliveryDetails(),
         ],
       ),
     );

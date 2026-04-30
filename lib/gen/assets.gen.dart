@@ -33,8 +33,8 @@ class $AssetsImagesGen {
   /// File path: assets/images/map-pin.svg
   SvgGenImage get mapPin => const SvgGenImage('assets/images/map-pin.svg');
 
-  /// File path: assets/images/pin.svg
-  SvgGenImage get pin => const SvgGenImage('assets/images/pin.svg');
+  /// File path: assets/images/phone.svg
+  SvgGenImage get phone => const SvgGenImage('assets/images/phone.svg');
 
   /// File path: assets/images/presley.png
   AssetGenImage get presley => const AssetGenImage('assets/images/presley.png');
@@ -46,7 +46,7 @@ class $AssetsImagesGen {
     clock,
     locationPin,
     mapPin,
-    pin,
+    phone,
     presley,
   ];
 }

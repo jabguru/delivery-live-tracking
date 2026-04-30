@@ -1,4 +1,5 @@
 import 'package:delivery_live_tracking/gen/fonts.gen.dart';
+import 'package:delivery_live_tracking/global/extensions/color_extension.dart';
 import 'package:delivery_live_tracking/global/theme/colors.dart';
 import 'package:flutter/material.dart';
 
@@ -14,6 +15,12 @@ class AppTheme {
         letterSpacing: 0.4,
         fontWeight: FontWeight.w600,
         color: AppColors.neutralColor,
+      ),
+      bodySmall: TextStyle(
+        fontSize: 12.0,
+        height: 1.5,
+        letterSpacing: 0.4,
+        color: AppColors.neutralColor.o(90),
       ),
     ),
   );
