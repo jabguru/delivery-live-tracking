@@ -4,6 +4,7 @@ import 'package:delivery_live_tracking/gen/assets.gen.dart';
 import 'package:delivery_live_tracking/global/extensions/context_extension.dart';
 import 'package:delivery_live_tracking/global/theme/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class DeliveryScreen extends StatelessWidget {
   const DeliveryScreen({super.key});
@@ -12,6 +13,10 @@ class DeliveryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: const SystemUiOverlayStyle(
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.dark,
+        ),
         backgroundColor: Colors.transparent,
         leadingWidth: context.eqW(80.0),
         leading: Padding(
