@@ -1,17 +1,27 @@
+import 'package:delivery_live_tracking/features/delivery/data/datasources/delivery_remote_datasource.dart';
 import 'package:delivery_live_tracking/features/delivery/data/models/delivery_model.dart';
 import 'package:delivery_live_tracking/features/delivery/data/models/location_model.dart';
-import 'package:delivery_live_tracking/features/delivery/data/services/osrm_routing_service.dart';
 import 'package:delivery_live_tracking/features/delivery/domain/entities/delivery_entity.dart';
 import 'package:delivery_live_tracking/features/delivery/domain/entities/location_entity.dart';
 import 'package:delivery_live_tracking/features/delivery/domain/repositories/delivery_repository.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'delivery_repository_impl.g.dart';
+
+@riverpod
+DeliveryRepository deliveryRepository(Ref ref) {
+  return DeliveryRepositoryImpl(ref.watch(deliveryRemoteDataSourceProvider));
+}
 
 class DeliveryRepositoryImpl implements DeliveryRepository {
+  const DeliveryRepositoryImpl(this._deliveryRemoteDataSource);
+
+  final DeliveryRemoteDataSource _deliveryRemoteDataSource;
+
   // Mock delivery data
   static const Duration _updateInterval = Duration(milliseconds: 500);
   static const Duration _waypointDuration = Duration(seconds: 3);
-
-  final OsrmRoutingService _routingService = OsrmRoutingService();
 
   @override
   Future<DeliveryEntity> getDelivery(String orderId) async {
@@ -23,7 +33,7 @@ class DeliveryRepositoryImpl implements DeliveryRepository {
     final destinationLocation = const LatLng(6.5400, 3.3600); // Destination
 
     // Fetch real route from OSRM
-    final routeWaypoints = await _routingService.getRoute(
+    final routeWaypoints = await _deliveryRemoteDataSource.getRoute(
       pickupLocation,
       destinationLocation,
     );

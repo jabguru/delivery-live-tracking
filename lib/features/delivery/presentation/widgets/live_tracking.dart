@@ -1,4 +1,4 @@
-import 'package:delivery_live_tracking/features/delivery/presentation/providers/delivery_provider.dart';
+import 'package:delivery_live_tracking/features/delivery/presentation/viewmodel/delivery_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

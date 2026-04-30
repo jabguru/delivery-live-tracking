@@ -1,7 +1,5 @@
-import 'package:delivery_live_tracking/features/delivery/data/repositories/delivery_repository_impl.dart';
 import 'package:delivery_live_tracking/features/delivery/domain/entities/delivery_entity.dart';
 import 'package:delivery_live_tracking/features/delivery/domain/entities/location_entity.dart';
-import 'package:delivery_live_tracking/features/delivery/domain/repositories/delivery_repository.dart';
 import 'package:delivery_live_tracking/features/delivery/domain/usecases/get_delivery_use_case.dart';
 import 'package:delivery_live_tracking/features/delivery/domain/usecases/watch_live_location_use_case.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -9,25 +7,6 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'delivery_provider.g.dart';
 
 const _orderId = 'ORD-682834513';
-
-// Repository provider
-@riverpod
-DeliveryRepository deliveryRepository(Ref ref) {
-  return DeliveryRepositoryImpl();
-}
-
-// Use case providers
-@riverpod
-GetDeliveryUseCase getDeliveryUseCase(Ref ref) {
-  final repository = ref.watch(deliveryRepositoryProvider);
-  return GetDeliveryUseCase(repository);
-}
-
-@riverpod
-WatchLiveLocationUseCase watchLiveLocationUseCase(Ref ref) {
-  final repository = ref.watch(deliveryRepositoryProvider);
-  return WatchLiveLocationUseCase(repository);
-}
 
 // Fetch initial delivery data
 @riverpod
