@@ -110,6 +110,54 @@ class DeliveryDetails extends StatelessWidget {
                     ],
                   ),
                   VerticalSpacing(18.0),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Order ID',
+                            style: context.textTheme.bodySmall.c(
+                              AppColors.neutralColorBody,
+                            ),
+                          ),
+                          Text(
+                            'ORD-682834513',
+                            style: context.textTheme.bodyMedium
+                                .c(AppColors.neutralColor)
+                                .w500,
+                          ),
+                        ],
+                      ),
+                      HorizontalSpacing(8.0),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.5,
+                          vertical: 6.0,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30.0),
+                          color: AppColors.orange.o(6.0),
+                        ),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 2.5,
+                              backgroundColor: AppColors.orange,
+                            ),
+                            HorizontalSpacing(4.0),
+                            Text(
+                              'On Delivery',
+                              style: context.textTheme.bodySmall.c(
+                                AppColors.orange,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
