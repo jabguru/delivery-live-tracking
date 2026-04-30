@@ -1,6 +1,7 @@
 import 'package:delivery_live_tracking/gen/assets.gen.dart';
 import 'package:delivery_live_tracking/global/extensions/color_extension.dart';
 import 'package:delivery_live_tracking/global/extensions/context_extension.dart';
+import 'package:delivery_live_tracking/global/extensions/text_style_extension.dart';
 import 'package:delivery_live_tracking/global/theme/colors.dart';
 import 'package:delivery_live_tracking/global/widgets/space.dart';
 import 'package:flutter/material.dart';
@@ -72,7 +73,10 @@ class DeliveryDetails extends StatelessWidget {
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('Presley Williams'),
+                              Text(
+                                'Presley Williams',
+                                style: context.textTheme.bodyLarge,
+                              ),
                               VerticalSpacing(6.0),
                               Text('Courier'),
                             ],
@@ -94,12 +98,18 @@ class DeliveryDetails extends StatelessWidget {
                               child: Assets.images.phone.svg(),
                             ),
                             HorizontalSpacing(5.0),
-                            Text('Call'),
+                            Text(
+                              'Call',
+                              style: context.textTheme.bodyMedium
+                                  .c(AppColors.white)
+                                  .w500,
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
+                  VerticalSpacing(18.0),
                 ],
               ),
             ),

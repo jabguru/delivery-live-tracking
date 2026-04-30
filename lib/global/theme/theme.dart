@@ -22,6 +22,19 @@ class AppTheme {
         letterSpacing: 0.4,
         color: AppColors.neutralColor.o(90),
       ),
+      bodyLarge: TextStyle(
+        fontSize: 16.0,
+        height: 1.0,
+        letterSpacing: 0.4,
+        fontWeight: FontWeight.w500,
+        color: AppColors.neutralColor,
+      ),
+      bodyMedium: TextStyle(
+        fontSize: 14.0,
+        height: 1.14,
+        letterSpacing: 0.4,
+        color: AppColors.neutralColorBody,
+      ),
     ),
   );
 }
