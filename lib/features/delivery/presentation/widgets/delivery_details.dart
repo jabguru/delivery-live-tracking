@@ -278,7 +278,7 @@ class _DeliveryTimeline extends StatelessWidget {
                       ),
                     ],
                   ),
-                  HorizontalSpacing(17.0),
+                  HorizontalSpacing(context.eqW(132.0)),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
