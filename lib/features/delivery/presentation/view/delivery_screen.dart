@@ -9,6 +9,9 @@ import 'package:flutter/services.dart';
 class DeliveryScreen extends StatelessWidget {
   const DeliveryScreen({super.key});
 
+  static const double _detailsHeight = 387.0;
+  static const double _detailsVerticalMargin = 18.0 * 2;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +38,14 @@ class DeliveryScreen extends StatelessWidget {
       extendBodyBehindAppBar: true,
       body: Stack(
         alignment: Alignment.bottomCenter,
-        children: [LiveTracking(), DeliveryDetails()],
+        children: [
+          LiveTracking(
+            bottomOverlayHeight: context.eqH(
+              _detailsHeight + _detailsVerticalMargin,
+            ),
+          ),
+          DeliveryDetails(),
+        ],
       ),
     );
   }
