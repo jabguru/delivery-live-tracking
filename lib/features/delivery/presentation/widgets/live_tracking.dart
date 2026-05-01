@@ -1,4 +1,7 @@
 import 'package:delivery_live_tracking/features/delivery/presentation/viewmodel/delivery_provider.dart';
+import 'package:delivery_live_tracking/gen/assets.gen.dart';
+import 'package:delivery_live_tracking/global/extensions/color_extension.dart';
+import 'package:delivery_live_tracking/global/theme/colors.dart';
 import 'package:delivery_live_tracking/global/widgets/progress_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -71,8 +74,8 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
               polylines: [
                 Polyline(
                   points: delivery.routeWaypoints,
-                  color: Colors.blue.withOpacity(0.7),
-                  strokeWidth: 4,
+                  color: AppColors.orange2,
+                  strokeWidth: 7.86,
                 ),
               ],
             ),
@@ -85,24 +88,7 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
                   point: delivery.destinationLocation,
                   width: 40,
                   height: 40,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.red,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.red.withOpacity(0.5),
-                          blurRadius: 8,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.location_on,
-                      color: Colors.white,
-                      size: 24,
-                    ),
-                  ),
+                  child: Assets.images.locationPin.svg(),
                 ),
 
                 // Rider marker with live location
@@ -120,24 +106,7 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
                       point: LatLng(location.latitude, location.longitude),
                       width: 40,
                       height: 40,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.green,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.green.withOpacity(0.5),
-                              blurRadius: 8,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.two_wheeler,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
+                      child: _RiderIcon(),
                     );
                   },
                   loading: () {
@@ -146,19 +115,7 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
                       point: delivery.pickupLocation,
                       width: 40,
                       height: 40,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.amber,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Center(
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: LoadingIndicator(),
-                          ),
-                        ),
-                      ),
+                      child: _RiderIcon(),
                     );
                   },
                   error: (error, stack) {
@@ -166,13 +123,7 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
                       point: delivery.pickupLocation,
                       width: 40,
                       height: 40,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.grey,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.error, color: Colors.white),
-                      ),
+                      child: _RiderIcon(),
                     );
                   },
                 ),
@@ -181,6 +132,30 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
           ],
         );
       },
+    );
+  }
+}
+
+class _RiderIcon extends StatelessWidget {
+  const _RiderIcon({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(spreadRadius: 9.07, color: AppColors.orange2.o(30)),
+        ],
+      ),
+      height: 38.57,
+      width: 38.57,
+      child: CircleAvatar(
+        radius: 16.0,
+        backgroundColor: AppColors.orange2,
+        child: Assets.images.bike.svg(),
+      ),
     );
   }
 }
