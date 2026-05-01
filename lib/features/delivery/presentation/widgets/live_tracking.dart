@@ -22,7 +22,8 @@ class LiveTracking extends ConsumerStatefulWidget {
   ConsumerState<LiveTracking> createState() => _LiveTrackingState();
 }
 
-class _LiveTrackingState extends ConsumerState<LiveTracking> {
+class _LiveTrackingState extends ConsumerState<LiveTracking>
+    with TickerProviderStateMixin {
   final MapController _mapController = MapController();
 
   static const double _defaultZoom = 15;
@@ -58,6 +59,54 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
 
   /// How long to pause auto-follow after a user gesture.
   static const Duration _pauseFollowAfterGesture = Duration(seconds: 3);
+
+  late final AnimationController _animationController;
+  LatLng? _animatedRiderLatLng;
+  LatLng? _targetRiderLatLng;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController =
+        AnimationController(
+          vsync: this,
+          duration: const Duration(milliseconds: 1000),
+        )..addListener(() {
+          if (_animatedRiderLatLng != null &&
+              _targetRiderLatLng != null &&
+              _lastRiderLatLng != null) {
+            final t = _animationController.value;
+            final lat =
+                _lastRiderLatLng!.latitude +
+                (_targetRiderLatLng!.latitude - _lastRiderLatLng!.latitude) * t;
+            final lng =
+                _lastRiderLatLng!.longitude +
+                (_targetRiderLatLng!.longitude - _lastRiderLatLng!.longitude) *
+                    t;
+            setState(() {
+              _animatedRiderLatLng = LatLng(lat, lng);
+            });
+            if (_shouldAutoFollow) {
+              _moveCameraKeepingPointVisible(_animatedRiderLatLng!);
+            }
+          }
+        });
+
+    // Initialize map to delivery location
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _lastZoom = _defaultZoom;
+      _moveCameraKeepingPointVisible(
+        const LatLng(6.5244, 3.3792),
+        zoom: _defaultZoom,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
 
   bool get _shouldAutoFollow {
     final t = _lastUserGestureAt;
@@ -114,20 +163,6 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
       zoom: effectiveZoom,
     );
     _mapController.move(adjusted, effectiveZoom);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Initialize map to delivery location
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _lastZoom = _defaultZoom;
-      _moveCameraKeepingPointVisible(
-        const LatLng(6.5244, 3.3792),
-        zoom: _defaultZoom,
-      );
-    });
   }
 
   @override
@@ -206,28 +241,45 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
                   data: (location) {
                     final rider = LatLng(location.latitude, location.longitude);
 
-                    final previous = _lastRiderLatLng;
-                    if (previous != null) {
-                      final meters = const Distance().as(
-                        LengthUnit.Meter,
-                        previous,
-                        rider,
-                      );
-                      if (meters >= _minBearingUpdateDistanceMeters) {
-                        _lastBearingDeg = _bearingDeg(previous, rider);
+                    if (_targetRiderLatLng == null) {
+                      _animatedRiderLatLng = rider;
+                      _targetRiderLatLng = rider;
+                      _lastRiderLatLng = rider;
+                    } else if (_targetRiderLatLng != rider) {
+                      // Save current position before starting a new animation
+                      _lastRiderLatLng =
+                          _animatedRiderLatLng ?? _targetRiderLatLng;
+                      _targetRiderLatLng = rider;
+
+                      final previous = _lastRiderLatLng;
+                      if (previous != null) {
+                        final meters = const Distance().as(
+                          LengthUnit.Meter,
+                          previous,
+                          rider,
+                        );
+                        if (meters >= _minBearingUpdateDistanceMeters) {
+                          _lastBearingDeg = _bearingDeg(previous, rider);
+                        }
                       }
+
+                      _animationController.forward(from: 0.0);
                     }
-                    _lastRiderLatLng = rider;
+
+                    final currentDisplayPos = _animatedRiderLatLng ?? rider;
 
                     // Smooth map camera follow (without forcing zoom).
                     Future.microtask(() {
                       if (!mounted) return;
-                      if (!_shouldAutoFollow) return;
-                      _moveCameraKeepingPointVisible(rider);
+                      // Done in animation listener, but handle first load case
+                      if (_shouldAutoFollow &&
+                          !_animationController.isAnimating) {
+                        _moveCameraKeepingPointVisible(currentDisplayPos);
+                      }
                     });
 
                     return Marker(
-                      point: rider,
+                      point: currentDisplayPos,
                       width: 40,
                       height: 40,
                       child: _RiderIcon(
