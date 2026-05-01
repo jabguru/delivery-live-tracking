@@ -150,9 +150,11 @@ class DeliveryDetails extends ConsumerWidget {
                             ),
                             child: Row(
                               children: [
-                                CircleAvatar(
+                                _BlinkingStatusDot(
+                                  enabled:
+                                      delivery.deliveryStatus == 'on_delivery',
+                                  color: AppColors.orange,
                                   radius: 2.5,
-                                  backgroundColor: AppColors.orange,
                                 ),
                                 HorizontalSpacing(4.0),
                                 Text(
@@ -183,6 +185,82 @@ class DeliveryDetails extends ConsumerWidget {
           ),
         );
       },
+    );
+  }
+}
+
+class _BlinkingStatusDot extends StatefulWidget {
+  const _BlinkingStatusDot({
+    required this.enabled,
+    required this.color,
+    required this.radius,
+  });
+
+  final bool enabled;
+  final Color color;
+  final double radius;
+
+  @override
+  State<_BlinkingStatusDot> createState() => __BlinkingStatusDotState();
+}
+
+class __BlinkingStatusDotState extends State<_BlinkingStatusDot>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
+
+    _opacity = Tween<double>(
+      begin: 0.25,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    if (widget.enabled) {
+      _controller.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _BlinkingStatusDot oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.enabled == widget.enabled) return;
+
+    if (widget.enabled) {
+      _controller.repeat(reverse: true);
+    } else {
+      _controller
+        ..stop()
+        ..value = 1.0;
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final dot = Container(
+      decoration: BoxDecoration(shape: BoxShape.circle, color: widget.color),
+    );
+
+    return SizedBox(
+      width: widget.radius * 2,
+      height: widget.radius * 2,
+      child: widget.enabled
+          ? FadeTransition(opacity: _opacity, child: dot)
+          : dot,
     );
   }
 }
@@ -325,7 +403,7 @@ class _DeliveryTimeline extends StatelessWidget {
 }
 
 class _Container extends StatelessWidget {
-  const _Container({required this.child, super.key});
+  const _Container({required this.child});
 
   final Widget child;
 

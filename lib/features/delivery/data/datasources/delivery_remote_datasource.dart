@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:latlong2/latlong.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -16,10 +17,6 @@ abstract class DeliveryRemoteDataSource {
   /// Returns list of LatLng points that follow actual roads
   /// Falls back to simple interpolation if API call fails
   Future<List<LatLng>> getRoute(LatLng start, LatLng end);
-
-  /// Fallback route generation if OSRM fails
-  /// Creates a simple interpolated path with intermediate points
-  List<LatLng> _getFallbackRoute(LatLng start, LatLng end);
 }
 
 /// Service for fetching real road routes from OSRM (Open Source Routing Machine)
@@ -71,12 +68,11 @@ class DeliveryRemoteDataSourceImpl implements DeliveryRemoteDataSource {
       return _getFallbackRoute(start, end);
     } catch (e) {
       // Fallback on network error or timeout
-      print('OSRM routing error: $e');
+      debugPrint('OSRM routing error: $e');
       return _getFallbackRoute(start, end);
     }
   }
 
-  @override
   List<LatLng> _getFallbackRoute(LatLng start, LatLng end) {
     final waypoints = <LatLng>[start];
 
