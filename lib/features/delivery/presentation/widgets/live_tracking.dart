@@ -199,7 +199,7 @@ class _LiveTrackingState extends ConsumerState<LiveTracking>
             onPositionChanged: (mapPosition, hasGesture) {
               // Cache zoom so live updates don't reset it.
               final z = mapPosition.zoom;
-              if (z != null) _lastZoom = z;
+              _lastZoom = z;
 
               // If the user is manipulating the map, pause auto-follow briefly.
               if (hasGesture) {
