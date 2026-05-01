@@ -47,6 +47,24 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
   // NOTE: Negating the offset flips the perceived facing direction for this asset.
   static const double _bikeBearingOffsetDeg = -90.0;
 
+  /// Last zoom level the user/map had.
+  ///
+  /// We cache this because live updates were previously forcing `_defaultZoom`.
+  double? _lastZoom;
+
+  /// When the user is actively interacting with the map (pan/zoom), we temporarily
+  /// pause auto-follow so gestures don't get overridden by live updates.
+  DateTime? _lastUserGestureAt;
+
+  /// How long to pause auto-follow after a user gesture.
+  static const Duration _pauseFollowAfterGesture = Duration(seconds: 3);
+
+  bool get _shouldAutoFollow {
+    final t = _lastUserGestureAt;
+    if (t == null) return true;
+    return DateTime.now().difference(t) > _pauseFollowAfterGesture;
+  }
+
   double _bearingDeg(LatLng from, LatLng to) {
     // Great-circle bearing calculation.
     final lat1 = from.latitudeInRad;
@@ -87,15 +105,15 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
     return LatLng(target.latitude + deltaLat, target.longitude);
   }
 
-  void _moveCameraKeepingPointVisible(
-    LatLng target, {
-    double zoom = _defaultZoom,
-  }) {
+  void _moveCameraKeepingPointVisible(LatLng target, {double? zoom}) {
+    // If zoom isn't specified, preserve the current/last known zoom.
+    final effectiveZoom = zoom ?? _lastZoom ?? _mapController.camera.zoom;
+
     final adjusted = _applyVerticalScreenOffsetToLatLng(
       target: target,
-      zoom: zoom,
+      zoom: effectiveZoom,
     );
-    _mapController.move(adjusted, zoom);
+    _mapController.move(adjusted, effectiveZoom);
   }
 
   @override
@@ -104,7 +122,11 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
 
     // Initialize map to delivery location
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _moveCameraKeepingPointVisible(const LatLng(6.5244, 3.3792));
+      _lastZoom = _defaultZoom;
+      _moveCameraKeepingPointVisible(
+        const LatLng(6.5244, 3.3792),
+        zoom: _defaultZoom,
+      );
     });
   }
 
@@ -140,7 +162,14 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
             initialCenter: delivery.pickupLocation,
             initialZoom: _defaultZoom,
             onPositionChanged: (mapPosition, hasGesture) {
-              // Handle map position changes
+              // Cache zoom so live updates don't reset it.
+              final z = mapPosition.zoom;
+              if (z != null) _lastZoom = z;
+
+              // If the user is manipulating the map, pause auto-follow briefly.
+              if (hasGesture) {
+                _lastUserGestureAt = DateTime.now();
+              }
             },
           ),
           children: [
@@ -190,8 +219,10 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
                     }
                     _lastRiderLatLng = rider;
 
-                    // Smooth map camera follow
+                    // Smooth map camera follow (without forcing zoom).
                     Future.microtask(() {
+                      if (!mounted) return;
+                      if (!_shouldAutoFollow) return;
                       _moveCameraKeepingPointVisible(rider);
                     });
 
