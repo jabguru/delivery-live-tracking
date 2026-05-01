@@ -1,4 +1,4 @@
-import 'package:delivery_live_tracking/features/delivery/presentation/viewmodel/delivery_provider.dart';
+import 'package:delivery_live_tracking/features/delivery/presentation/view_model/delivery_provider.dart';
 import 'package:delivery_live_tracking/gen/assets.gen.dart';
 import 'package:delivery_live_tracking/global/extensions/color_extension.dart';
 import 'package:delivery_live_tracking/global/extensions/context_extension.dart';
