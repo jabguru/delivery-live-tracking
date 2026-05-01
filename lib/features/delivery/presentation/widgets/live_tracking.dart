@@ -30,6 +30,39 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
   /// How much extra breathing room we want between the tracked point and the sheet.
   static const double _extraTopSpacingPx = 16;
 
+  /// Last known rider point so we can derive direction of travel.
+  LatLng? _lastRiderLatLng;
+
+  /// Last non-noisy bearing (degrees) so the icon doesn't jitter when stationary.
+  double _lastBearingDeg = 0;
+
+  /// Minimum distance (in meters) before we update bearing.
+  static const double _minBearingUpdateDistanceMeters = 2.0;
+
+  /// Initial bike SVG faces right (east). We define bearing as degrees from north.
+  /// To align the icon, we rotate by (bearingDeg + offset).
+  ///
+  /// If you ever replace the SVG and it points a different way by default,
+  /// tweak this value.
+  // NOTE: Negating the offset flips the perceived facing direction for this asset.
+  static const double _bikeBearingOffsetDeg = -90.0;
+
+  double _bearingDeg(LatLng from, LatLng to) {
+    // Great-circle bearing calculation.
+    final lat1 = from.latitudeInRad;
+    final lat2 = to.latitudeInRad;
+    final dLon = (to.longitude - from.longitude) * math.pi / 180.0;
+
+    final y = math.sin(dLon) * math.cos(lat2);
+    final x =
+        math.cos(lat1) * math.sin(lat2) -
+        math.sin(lat1) * math.cos(lat2) * math.cos(dLon);
+
+    var brng = math.atan2(y, x) * 180.0 / math.pi; // [-180, 180]
+    brng = (brng + 360.0) % 360.0; // [0, 360)
+    return brng;
+  }
+
   LatLng _applyVerticalScreenOffsetToLatLng({
     required LatLng target,
     required double zoom,
@@ -144,6 +177,19 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
                   data: (location) {
                     final rider = LatLng(location.latitude, location.longitude);
 
+                    final previous = _lastRiderLatLng;
+                    if (previous != null) {
+                      final meters = const Distance().as(
+                        LengthUnit.Meter,
+                        previous,
+                        rider,
+                      );
+                      if (meters >= _minBearingUpdateDistanceMeters) {
+                        _lastBearingDeg = _bearingDeg(previous, rider);
+                      }
+                    }
+                    _lastRiderLatLng = rider;
+
                     // Smooth map camera follow
                     Future.microtask(() {
                       _moveCameraKeepingPointVisible(rider);
@@ -153,7 +199,10 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
                       point: rider,
                       width: 40,
                       height: 40,
-                      child: _RiderIcon(),
+                      child: _RiderIcon(
+                        bearingDeg:
+                            (_lastBearingDeg + _bikeBearingOffsetDeg) % 360.0,
+                      ),
                     );
                   },
                   loading: () {
@@ -162,7 +211,10 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
                       point: delivery.pickupLocation,
                       width: 40,
                       height: 40,
-                      child: _RiderIcon(),
+                      child: _RiderIcon(
+                        bearingDeg:
+                            (_lastBearingDeg + _bikeBearingOffsetDeg) % 360.0,
+                      ),
                     );
                   },
                   error: (error, stack) {
@@ -170,7 +222,10 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
                       point: delivery.pickupLocation,
                       width: 40,
                       height: 40,
-                      child: _RiderIcon(),
+                      child: _RiderIcon(
+                        bearingDeg:
+                            (_lastBearingDeg + _bikeBearingOffsetDeg) % 360.0,
+                      ),
                     );
                   },
                 ),
@@ -184,10 +239,16 @@ class _LiveTrackingState extends ConsumerState<LiveTracking> {
 }
 
 class _RiderIcon extends StatelessWidget {
-  const _RiderIcon();
+  const _RiderIcon({required this.bearingDeg});
+
+  /// Rotation degrees clockwise.
+  final double bearingDeg;
 
   @override
   Widget build(BuildContext context) {
+    // AnimatedRotation expects “turns” (1 turn = 360°)
+    final turns = bearingDeg / 360.0;
+
     return Container(
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -201,7 +262,16 @@ class _RiderIcon extends StatelessWidget {
       child: CircleAvatar(
         radius: 16.0,
         backgroundColor: AppColors.orange2,
-        child: Assets.images.bike.svg(),
+        child: AnimatedRotation(
+          turns: turns,
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOut,
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.diagonal3Values(1.0, -1.0, 1.0),
+            child: Assets.images.bike.svg(),
+          ),
+        ),
       ),
     );
   }
