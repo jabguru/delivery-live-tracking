@@ -12,11 +12,11 @@ tracking) featuring real-time simulated movement, route mapping, and smooth mark
   </tr>
   <tr>
     <td align="center">
-      <!-- Ensure your file is named android_demo.gif and placed in the /media folder -->
-      <img src="./media/android_recording.gif" width="250" alt="Android Demo">
+      <a href="https://drive.google.com/file/d/16XBEJ0YmdBsAgAgBmOuTzPGFs7w_MEtg/view?usp=sharing">
+        <b>▶ Watch Android Demo</b>
+      </a>
     </td>
     <td align="center">
-      <!-- Ensure your file is named ios_screenshot.png and placed in the /media folder -->
       <img src="./media/ios_screenshot.png" width="250" alt="iOS Screenshot">
     </td>
   </tr>
