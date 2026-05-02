@@ -60,6 +60,28 @@ pattern. The code is modularized by feature. Specifically, the delivery feature 
 - **Bottom Status Card:** A clean, responsive UI component showing courier information, current
   delivery status, and a call action button.
 
+## 🧠 Technical Highlights
+
+- **Directional Auto-Rotation:** Utilizes a Great-Circle bearing calculation (`_bearingDeg`) to
+  dynamically determine the direction of travel and seamlessly align the bike marker using
+  `AnimatedRotation`.
+- **Gesture-Aware Map Following:** Integrates a smart `_shouldAutoFollow` mechanism that detects
+  user map interactions (pan/zoom) and temporarily pauses auto-centering, preventing jarring jumping
+  when exploring the map.
+- **Intelligent Viewport Offset:** Features a custom `_applyVerticalScreenOffsetToLatLng` function
+  that converts map pixels to meters using zoom levels and latitude calculations. This ensures the
+  tracked marker remains perfectly centered in the visible space *above* the overlaying bottom UI
+  card.
+- **Stream-Level Motion Interpolation:** Employs a custom ease-out cubic function within the data
+  layer to generate tracking frames across route polyline waypoints, resulting in completely fluid,
+  non-jittery marker movement across the screen.
+- **Precise Responsive Scaling Utility:** Uses a custom dimension scaling system (`eqH`, `eqW`,
+  `eqR`) mapped directly to Figma UI design dimensions (428x926), guaranteeing consistent proportion
+  and layouts across any device screen size.
+- **State-Driven Countdown (ETA):** Implements specialized Riverpod `StreamProvider`s matching
+  initial simulated delivery constraints with system epoch times to broadcast descending ETA counts
+  efficiently to the UI layer.
+
 ## 🗺 Mapping Solution: OpenStreetMap & OSRM vs. Google Maps
 
 A deliberate choice was made to use **OpenStreetMap (OSM)** via `flutter_map` and the **OSRM (Open
