@@ -12,7 +12,7 @@ tracking) featuring real-time simulated movement, route mapping, and smooth mark
   </tr>
   <tr>
     <td align="center">
-      <img src="https://github.com/jabguru/delivery-live-tracking/releases/download/v1.0.0/android_demo.gif" width="250" alt="Android Preview">
+      <img src="https://github.com/jabguru/delivery-live-tracking/releases/download/v1.0.0/android_demo_trim.gif" width="250" alt="Android Preview">
     </td>
     <td align="center">
       <img src="./media/ios_screenshot.png" width="250" alt="iOS Screenshot">
