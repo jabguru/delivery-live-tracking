@@ -13,7 +13,7 @@ tracking) featuring real-time simulated movement, route mapping, and smooth mark
   <tr>
     <td align="center">
       <!-- Ensure your file is named android_demo.gif and placed in the /media folder -->
-      <img src="./media/android_demo.gif" width="250" alt="Android Demo">
+      <img src="./media/android_recording.gif" width="250" alt="Android Demo">
     </td>
     <td align="center">
       <!-- Ensure your file is named ios_screenshot.png and placed in the /media folder -->
@@ -24,7 +24,7 @@ tracking) featuring real-time simulated movement, route mapping, and smooth mark
 
 ## 🚀 Download APK
 
-[⬇️ Download the latest Android APK](YOUR_APK_DOWNLOAD_LINK_HERE)
+[⬇️ Download the latest Android APK](https://github.com/jabguru/delivery-live-tracking/releases/download/v1.0.0/app-release.apk)
 
 ## 🛠 Tech Stack
 
