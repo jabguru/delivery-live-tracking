@@ -7,14 +7,12 @@ tracking) featuring real-time simulated movement, route mapping, and smooth mark
 
 <table>
   <tr>
-    <td align="center"><b>Android (GIF)</b></td>
+    <td align="center"><b>Android (Video)</b></td>
     <td align="center"><b>iOS (Screenshot)</b></td>
   </tr>
   <tr>
     <td align="center">
-      <a href="https://drive.google.com/file/d/16XBEJ0YmdBsAgAgBmOuTzPGFs7w_MEtg/view?usp=sharing">
-        <b>▶ Watch Android Demo</b>
-      </a>
+      <video src="https://drive.google.com/uc?export=download&id=16XBEJ0YmdBsAgAgBmOuTzPGFs7w_MEtg" width="250" controls></video>
     </td>
     <td align="center">
       <img src="./media/ios_screenshot.png" width="250" alt="iOS Screenshot">
