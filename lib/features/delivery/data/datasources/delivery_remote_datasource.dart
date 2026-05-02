@@ -13,9 +13,6 @@ DeliveryRemoteDataSource deliveryRemoteDataSource(Ref ref) {
 }
 
 abstract class DeliveryRemoteDataSource {
-  /// Fetch route waypoints from OSRM API
-  /// Returns list of LatLng points that follow actual roads
-  /// Falls back to simple interpolation if API call fails
   Future<List<LatLng>> getRoute(LatLng start, LatLng end);
 }
 
@@ -25,6 +22,9 @@ class DeliveryRemoteDataSourceImpl implements DeliveryRemoteDataSource {
       'https://router.project-osrm.org/route/v1/driving';
   static const Duration _timeout = Duration(seconds: 30);
 
+  /// Fetch route waypoints from OSRM API
+  /// Returns list of LatLng points that follow actual roads
+  /// Falls back to simple interpolation if API call fails
   @override
   Future<List<LatLng>> getRoute(LatLng start, LatLng end) async {
     try {
