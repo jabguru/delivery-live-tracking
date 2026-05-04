@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:delivery_live_tracking/features/delivery/presentation/view_model/delivery_provider.dart';
+import 'package:delivery_live_tracking/features/delivery/presentation/view_model/delivery_notifier.dart';
 import 'package:delivery_live_tracking/gen/assets.gen.dart';
 import 'package:delivery_live_tracking/global/extensions/color_extension.dart';
 import 'package:delivery_live_tracking/global/theme/colors.dart';
@@ -168,7 +168,7 @@ class _LiveTrackingState extends ConsumerState<LiveTracking>
   @override
   Widget build(BuildContext context) {
     final deliveryAsync = ref.watch(deliveryProvider);
-    final liveLocationAsync = ref.watch(liveLocationProvider);
+    final liveLocationAsync = ref.watch(liveLocationNotificationProvider);
 
     return deliveryAsync.when(
       loading: () {

@@ -1,4 +1,4 @@
-import 'package:delivery_live_tracking/features/delivery/presentation/view_model/delivery_provider.dart';
+import 'package:delivery_live_tracking/features/delivery/presentation/view_model/delivery_notifier.dart';
 import 'package:delivery_live_tracking/gen/assets.gen.dart';
 import 'package:delivery_live_tracking/global/extensions/color_extension.dart';
 import 'package:delivery_live_tracking/global/extensions/context_extension.dart';
@@ -15,7 +15,7 @@ class DeliveryDetails extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final deliveryAsync = ref.watch(deliveryProvider);
-    final etaAsync = ref.watch(etaProvider);
+    final etaAsync = ref.watch(eTAProvider);
     return deliveryAsync.when(
       loading: () {
         return _Container(child: const Center(child: LoadingIndicator()));
